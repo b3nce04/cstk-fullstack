@@ -1,0 +1,12 @@
+P = protected (bejelentkezés után fasza)
+
+/api/v1/
+    /user
+        /login - POST
+        /register - POST
+    /class
+        / - GET
+    /setting
+        /:key - GET
+
+HIBAKEZELÉST MEGOLD, NE CSAK AKKOR TÉRJEN VISSZA HA MINDEN FASZA, LEGYEN INTERAKÍTÍV
