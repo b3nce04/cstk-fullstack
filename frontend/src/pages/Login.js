@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Alert from "@mui/material/Alert";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -11,19 +12,27 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import Copyright from './Login.Copyright.js';
+import Copyright from '../components/Copyright.js';
 import { useSnackbar } from 'notistack'
 
-import apiClient from "../api-client.js";
+import apiClient from "../api/api-client.js";
+
+import {useAuth} from "../contexts/AuthContext.js";
 
 export default function Login() {
 	const [classes, setClasses] = useState([]);
-	const [selectedClass, setSelectedClass] = useState(1)
+	const [message, setMessage] = useState("");
+	const [selectedClass, setSelectedClass] = useState(0)
+	const { enqueueSnackbar } = useSnackbar();
+	const navigate = useNavigate();
+	const {login} = useAuth();
 
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	useEffect(() => {
 		apiClient("get", "/class", setClasses);
+		apiClient("get", "/setting/global-message", (res) => {
+			setMessage(res.value)
+		});
 	}, [])
 
 	const handleSelect = (event) => {
@@ -33,8 +42,11 @@ export default function Login() {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
-		apiClient("post", "/user/login", (res) => {
-			enqueueSnackbar(res.msg, { variant: 'info' })
+		apiClient("post", "/user/login", (res, status) => {
+			enqueueSnackbar(res.msg, { variant: res.type || 'info' })
+			if (status === 201) {
+				login()
+			}
 		}, {
 			email: data.get("email"),
 			password: data.get("password"),
@@ -68,8 +80,8 @@ export default function Login() {
 								fullWidth
 								label="E-mail cím"
 								name="email"
-								autoComplete="email"
 								autoFocus
+								autoComplete="current-email"
 							/>
 						</Grid>
 						<Grid item xs={12}>
@@ -84,16 +96,17 @@ export default function Login() {
 						</Grid>
 						<Grid item xs={12}>
 							<FormControl fullWidth>
-								<InputLabel id="demo-simple-select-label">
-									Válassz osztályt
+								<InputLabel id="select-label">
+									Osztály
 								</InputLabel>
 								<Select
-									labelId="demo-simple-select-label"
+									labelId="select-label"
+									label="Osztály"
 									name="classId"
 									value={selectedClass}
-									label="Válassz osztályt"
 									onChange={handleSelect}
 								>
+									<MenuItem key='0' value='0'>Válaszd ki a megfelelőt</MenuItem>
 									{classes.map((item) => {
 										return (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)
 									})}
@@ -110,19 +123,18 @@ export default function Login() {
 							</Button>
 						</Grid>
 						<Grid item xs={12}>
-							<Link to="/register" style={{ textDecoration: "none" }}>
-								<Button
-									type="submit"
-									fullWidth
-									variant="outlined"
-								>
-									Regisztráció
-								</Button>
-							</Link>
+							<Button
+								fullWidth
+								variant="outlined"
+								onClick={() => navigate('/register')}
+							>
+								Regisztráció
+							</Button>
 						</Grid>
 					</Grid>
 				</Box>
 			</Box>
+			{message && <Alert severity="info">{message}</Alert>}
 			<Copyright sx={{ mt: 2 }} />
 		</Container>
 	);

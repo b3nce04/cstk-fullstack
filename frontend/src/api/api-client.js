@@ -3,6 +3,7 @@ import {trackPromise} from 'react-promise-tracker'
 
 const instance = axios.create({
     baseURL: 'http://localhost:4000/api/v1',
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
         'api-key': '858d6f1d-ed77-4c4d-b085-5e9841b81cb1',
@@ -20,7 +21,7 @@ function apiClient(method, source, callback, data) {
         data: data
     }))
         .then((res) => {
-            callback(res.data);
+            callback(res.data, res.status);
         })
         .catch((err) => {
             console.log(err);

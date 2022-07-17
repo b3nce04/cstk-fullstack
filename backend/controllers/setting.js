@@ -6,7 +6,7 @@ const getSetting = async (req, res, next) => {
     if (setting) {
         result = {value: setting.value}
     }
-    res.send(JSON.stringify(result))
+    res.json(result)
 }
 
 export {getSetting}

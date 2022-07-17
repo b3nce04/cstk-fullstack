@@ -1,13 +1,19 @@
 import 'dotenv/config'
 import express from 'express';
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 import apiRoutes from './routes/api.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    allowedHeaders: ['Content-Type', 'api-key'],
+    credentials: true
+}))
+app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(express.json())
 
 app.listen(PORT, () => {

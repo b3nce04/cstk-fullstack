@@ -1,4 +1,4 @@
-P = protected (bejelentkezés után fasza)
+P = protected (bejelentkezés után fasza - bearer token kell)
 
 /api/v1/
     /user
@@ -9,4 +9,8 @@ P = protected (bejelentkezés után fasza)
     /setting
         /:key - GET
 
-HIBAKEZELÉST MEGOLD, NE CSAK AKKOR TÉRJEN VISSZA HA MINDEN FASZA, LEGYEN INTERAKÍTÍV
+HIBAKEZELÉST MEGOLD, NE CSAK AKKOR TÉRJEN VISSZA HA MINDEN FASZA, LEGYEN INTERAKTÍV
+
+CSURF VESZÉLY
+
+API-ban link / Adatbázisban mező: spinal-case

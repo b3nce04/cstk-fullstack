@@ -7,11 +7,11 @@ import settingRoutes from './api/setting.js'
 const router = express.Router();
 
 router.use((req, res, next) => {
-    if (process.env.API_KEY && req.get('api-key') === process.env.API_KEY) {
-        next();
-    } else {
-        res.status(401).send({msg: "Hibás API kulcs. Hozzáférés megtagadva!"})
+    if (!req.get('api-key') || req.get('api-key') !== process.env.API_KEY) {
+        res.status(403).json({msg: "Nincs vagy hibás API kulcs. Hozzáférés megtagadva!"})
+        return
     }
+    next();
 })
 
 router.use("/user", userRoutes);
